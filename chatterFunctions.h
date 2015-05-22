@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+
+
 float determineToothPassFrequency(int spindleSpeed, int numFlutes);
 
 float determineChatterFrequency(NSMutableArray* sortedFreqBins, int toothpassFreq);
+
+NSArray* filterOutToothPassingFrequencyHarmonics(int freq, float mag, int toothpassingFreq, int nOver2);

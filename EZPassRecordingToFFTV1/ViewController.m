@@ -87,20 +87,20 @@ int fftBuffIndex = 0;
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - SpindeSpeedFunciton
-+(float)getSpindleSpeed:(float[])frequecy{
-    float newSpindleSpeed; // initialize the return spindle speed variable
-    
-    // iterate through array to get max frequency
-    
-    for (int j = 1; j < 512; j++) //already nested in a loop no need to call another one
-    {
-        printf("%3d\t%6.2f\n", j, frequecy[j]); // normalized magnatudes
-    }
-    // if sampeling at 1023 Hz each bin holds a span of 44hz
-    
-    return newSpindleSpeed;
-}
+//#pragma mark - SpindeSpeedFunciton
+//+(float)getSpindleSpeed:(float[])frequecy{
+//    float newSpindleSpeed; // initialize the return spindle speed variable
+//    
+//    // iterate through array to get max frequency
+//    
+//    for (int j = 1; j < 512; j++) //already nested in a loop no need to call another one
+//    {
+//        printf("%3d\t%6.2f\n", j, frequecy[j]); // normalized magnatudes
+//    }
+//    // if sampeling at 1023 Hz each bin holds a span of 44hz
+//    
+//    return newSpindleSpeed;
+//}
 
 # pragma mark FFT
 
@@ -151,19 +151,6 @@ int fftBuffIndex = 0;
         //        printf("%3d\t%6.2f\t%6.2f\n", k, _A.realp[k], _A.imagp[k]);
         //    }
     
-    // need to convert (real,imaginary) bin data -> (magnitude,phase)data
-    
-            //    float mag[nOver2/2];
-            //    float phase[nOver2/2];
-            //    mag and phase array initilazation
-            //    _A.realp = mag;
-            //    _A.imagp = phase;
-    
-    // compute mag and phase
-            //    vDSP_zvabs(&_A, 1, mag, 1, nOver2);
-            //    vDSP_zvphas(&_A, 1, phase, 1, nOver2);
-    
-
     // Convert COMPLEX_SPLIT A result to magnitudes
     float amp[nOver2];
     float maxMag = 0;
@@ -183,24 +170,34 @@ int fftBuffIndex = 0;
         // Bind the value to be less than 1.0 to fit in the graph
         amp[i] = [EZAudio MAP:mag leftMin:0.0 leftMax:maxMag rightMin:0.0 rightMax:1.0];
         
+        NSArray *freqMagPair = [[NSArray alloc]init];
+        
+        freqMagPair = filterOutToothPassingFrequencyHarmonics(i, mag, 200, nOver2); // mag switched from amp[i]
+        
         // print bins (bin, normalize magnitude) spectrum bin data
         
         // for (int j = 1; j < nOver2; j++) //already nested in a loop no need to call another one
         //        {
         //    printf("%3d\t%6.2f\n", i, amp[i]); // normalized magnatudes
         //        }
-        // if sampeling at 1023 Hz each bin holds a span of 44hz
-        int freqBin = i * 22000/nOver2;
         
-        NSNumber *freq = [NSNumber numberWithInt:freqBin];
+    // if sampeling at 1023 Hz each bin holds a span of 44hz
+        //int freqBin = i * 22000/nOver2;
         
-        NSNumber *magnatude = [NSNumber numberWithFloat:amp[i]];
+        //NSNumber *freq = [NSNumber numberWithInt:freqBin];
         
-        NSArray *freqMagPair = [NSArray arrayWithObjects:magnatude,freq, nil];
+        //NSNumber *magnatude = [NSNumber numberWithFloat:amp[i]];
+        
+        //NSArray *freqMagPair = [NSArray arrayWithObjects:freq, magnatude, nil];
         
         [frequencyBins addObject:freqMagPair];
+        
+        
+        
         // NSLog(@"%i",i);
     }
+    
+    
     
     
     // function to do data analysis getSpindleSpeed (note frequency bins array is now sorted)
